@@ -1,18 +1,19 @@
 # Heart-Disease-Prediction
-**Heart Disease Prediction with Machine Learning In R**
 
-*Overview*
+**Overview**
+
 According to the World Health Organization (WHO), With 17.9 million deaths per year, cardiovascular diseases (CVDs) are the leading cause of death worldwide. Coronary heart disease, cerebrovascular disease, rheumatic heart disease, and other illnesses are among the category of heart and blood vessel disorders known as CVDs. Heart attacks and strokes account for more than four out of every five CVD deaths, and one third of these deaths happen before the age of 70.
 Unhealthy eating, inactivity, usage of tobacco products, and abusing alcohol are the main behavioral risk factors for heart disease and stroke. Individuals may experience elevated blood pressure, elevated blood glucose, elevated blood lipids, as well as overweight and obesity as a result of these risk factors. These "intermediate risk variables" can be assessed in primary care settings and point to an elevated risk of consequences like heart attack, stroke, and heart failure.
 Premature deaths can be avoided by identifying those who are most at risk for CVDs and ensuring they receive the proper care and on time. Thus, the need to predict the case of heart disease correctly is essential.
 
-*Project Details*
+**Project Details**
+
 In this project I made use of R programming to build machine learning models that can predict the occurrence of heart disease with the help of certain habits, features and factors such as BMI, cholesterol level, type of foods consumed, smoking habit etc.  The dataset used was large and provides enough data for the model. However, the dataset was highly imbalanced and favored one class (no heart disease) in the ratio of 90:10%.
 
-*Data*
+**Data**
 The dataset used for this project was downloaded from Kaggle. The dataset contains 253680 observations and 22 variables, that is, 1 response variable (HeartDiseasorAttack) and 21 other predictor variables some of which are, BMI, high cholesterol, Physical activity, Mental health, Diabetes, Stroke etc. The dataset was highly imbalanced with 90% of cases occurring as no heart disease or attack.
 
-*Findings and Results*
+**Findings and Results**
 •	Data Processing
 Not much was done on missing values because the data came clean. Nonetheless, data type conversions were carried out.
 •	Data Visualization
