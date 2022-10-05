@@ -1,0 +1,519 @@
+---
+title: "heart disease prediction "
+author: "Precious Ebu"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#loading required libraries
+```{r}
+library(tidyverse)
+library(readxl)
+library(psych)
+library(ggpubr)
+library(lattice)
+library(ggplot2)
+library(caret)
+```
+#importing the dataset
+```{r}
+heart <- read.csv("C:\\Users\\user\\Documents\\DATALAB\\Datasets\\New Dataset\\heart_disease_health_indicators_BRFSS2015.csv")
+```
+
+#first glimpse of the dataset
+```{r}
+head(heart)
+```
+
+#viewing the data
+```{r}
+view(heart)
+```
+
+#getting insights
+```{r}
+str(heart)
+```
+#getting further insights
+```{r}
+glimpse(heart)
+```
+#checking the decriptive statistics
+```{r}
+summary(heart)
+```
+#checking for missing values(NA)
+```{r}
+which(is.na(heart))
+```
+#checking the sum of NAs
+```{r}
+sum(is.na(heart))
+```
+#subsetting the numeric variables
+```{r}
+heart[c(5,16,17,20)]
+```
+#checking for unique values
+```{r}
+unique(heart$GenHlth)
+```
+
+#converting numeric columns to integer datatype
+```{r}
+heart[c(5,16,17,20)] <- lapply(heart[c(5,16,17,20)], as.integer)
+```
+
+#confirming the conversion
+```{r}
+str(heart)
+```
+#checking unique values
+```{r}
+unique(heart$Education)
+```
+
+```{r}
+unique(heart$Income)
+```
+
+#converting categorical variables to factor
+```{r}
+heart[c(1:4,6:15,18,19)] <- lapply(heart[c(1:4,6:15,18,19,21,22)], as.factor)
+```
+
+#confirming the conversion
+```{r}
+glimpse(heart)
+```
+###EXPLORATORY DATA ANALYSIS (EDA)
+#saving the numeric columns into a variable name
+```{r}
+heart_cont <- heart[c(5,16,17,20)]
+```
+
+#visualizing outliers
+```{r}
+boxplot(heart_cont)
+```
+
+#saving outliers in BMI into a variable
+```{r}
+outliers <- boxplot(heart$BMI, plot = FALSE)$out 
+```
+
+#converting outliers to NAs
+```{r}
+heart$BMI[heart$BMI %in% outliers] <- NA
+```
+
+#checking sum of NAs after the conversion
+```{r}
+sum(is.na(heart$BMI))
+```
+
+#saving outliers in "MentHlth" into a variable
+```{r}
+outliers2 <- boxplot(heart$MentHlth, plot = FALSE)$out 
+```
+
+#converting outliers to NAs
+```{r}
+heart$MentHlth[heart$MentHlth %in% outliers2] <- NA
+```
+
+#checking the sum of NAs after conversion
+```{r}
+sum(is.na(heart$MentHlth))
+```
+
+#saving outliers into a variable
+```{r}
+outliers3 <- boxplot(heart$PhysHlth, plot = FALSE)$out 
+```
+
+#converting outliers to NAs
+```{r}
+heart$PhysHlth[heart$PhysHlth %in% outliers3] <- NA
+```
+
+#checking the sum of NAs after the converion
+```{r}
+sum(is.na(heart$PhysHlth))
+```
+
+#replacing NAs with the column mean
+```{r}
+heart$BMI[is.na(heart$BMI)] <-  mean(heart$BMI, na.rm = TRUE)
+heart$MentHlth[is.na(heart$MentHlth)] <- mean(heart$MentHlth, na.rm = TRUE)
+heart$PhysHlth[is.na(heart$PhysHlth)] <- mean(heart$PhysHlth, na.rm = TRUE)
+```
+
+#confirming there are no outliers 
+```{r}
+heart[which(heart$BMI %in% outliers),]
+heart[which(heart$MentHlth %in% outliers2),]
+heart[which(heart$PhysHlth %in% outliers3),]
+```
+
+#saving the numeric columns into a variable name
+```{r}
+heart_num <- heart[c(5,16,17,20)]
+```
+
+#visualizing outliers after replacement
+```{r}
+boxplot(heart_num)
+```
+
+#checking the descriptive statistics after replacement
+```{r}
+describe(heart_num)
+```
+
+#confirming there are no NAs
+```{r}
+which(is.na(heart))
+```
+
+#DATA VISUALIZATION
+#plotting all variables against the target variable "HeartDiseaseorAttack"
+```{r}
+ggplot(heart, aes(x = HeartDiseaseorAttack))+ 
+  geom_bar(mapping = aes(fill=HeartDiseaseorAttack)) + geom_text(aes(y=..count..-200, 
+                label = paste0(round(prop.table(..count..),4) * 100, '%')), 
+            stat = 'count', position = position_dodge(.1), size =3)
+```
+
+#saving variables into a name and plotting bar chart of all variables
+```{r}
+variables <-list("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", "Diabetes", "PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", "GenHlth", "DiffWalk", "Sex", "Education", "Income") 
+plot <- list()
+
+ for (i in variables){
+ plot <-  ggplot(data = heart, aes_string(x=i, fill = as.factor(heart$HeartDiseaseorAttack)))+
+  geom_bar(position = "stack") + 
+  geom_text(aes(y=..count..-200, 
+                label = paste0(round(prop.table(..count..),4) * 100, '%')), 
+            stat = 'count', position = position_dodge(.1), size =3)
+   print(plot)
+}
+```
+
+#checking for relationships between categorical variables
+```{r}
+chisq.test(heart$CholCheck, heart$HeartDiseaseorAttack) 
+```
+
+```{r}
+chisq.test(heart$Smoker, heart$HeartDiseaseorAttack)
+
+```
+
+```{r}
+chisq.test(heart$Stroke, heart$HeartDiseaseorAttack)
+
+```
+
+```{r}
+chisq.test(heart$Diabetes, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$HighBP, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$HighChol, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+colnames(heart)
+```
+
+```{r}
+chisq.test(heart$PhysActivity, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$Fruits, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$Veggies, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$HvyAlcoholConsump, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$AnyHealthcare, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$NoDocbcCost, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$GenHlth, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$DiffWalk, heart$HeartDiseaseorAttack)
+```
+
+
+```{r}
+chisq.test(heart$Sex, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$Education, heart$HeartDiseaseorAttack)
+```
+
+```{r}
+chisq.test(heart$Income, heart$HeartDiseaseorAttack)
+```
+
+#checking for correlation between numerical variables
+```{r}
+cor(heart$BMI, heart$MentHlth)
+```
+
+```{r}
+cor(heart$MentHlth, heart$PhysHlth)
+```
+
+```{r}
+cor(heart$BMI, heart$PhysHlth)
+```
+
+```{r}
+cor(heart$BMI, heart$Age)
+```
+
+```{r}
+cor(heart$MentHlth, heart$Age)
+```
+
+```{r}
+cor(heart$PhysHlth, heart$Age)
+```
+
+```{r}
+heart_cor <- cor(heart_num)
+```
+
+#loading a library
+```{r}
+library(corrplot)
+```
+
+#plotting a correlation matrix
+```{r}
+corrplot::cor.mtest(heart_num)
+```
+
+#visualizing the matrix
+```{r}
+corrplot(heart_cor)
+```
+
+#carrying out a one-way ANOVA
+```{r}
+result <- aov(BMI~ HeartDiseaseorAttack, data = heart)
+summary(result)
+```
+
+#plotting a heat map
+```{r}
+heatmap(heart_cor)
+```
+
+#tabulating the target variable
+```{r}
+table(heart$HeartDiseaseorAttack)
+```
+
+#plotting the target variable on a bar chart
+```{r}
+ggplot(data = heart, aes(fill = HeartDiseaseorAttack)) +
+    geom_bar(aes(x = HeartDiseaseorAttack))+
+    ggtitle("Number of samples in each class", subtitle = "Heart Disease data")+
+    xlab("")+
+    ylab("Samples")+
+    scale_y_continuous(expand = c(0,0))+
+    scale_x_discrete(expand = c(0,0))+
+    theme(legend.position = "none", 
+         legend.title = element_blank(),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+#DATA MODELLING AND MACHINE LEARNING
+#loading a library for splitting
+```{r}
+library(caTools)
+```
+
+```{r}
+#making this example reproducible
+set.seed(265)
+
+#Using 70% of dataset as training set and remaining 30% as testing set
+sample <- sample.split(heart$HeartDiseaseorAttack, SplitRatio = 0.7)
+train_data <- subset(heart, sample == TRUE)
+test_data  <- subset(heart, sample == FALSE)
+```
+
+#checking the dimension of the train and test data
+```{r}
+dim(train_data)
+dim(test_data)
+```
+
+#tabulating the number of cases of the target variable in both sets
+```{r}
+prop.table(table(train_data$HeartDiseaseorAttack))
+prop.table(table(test_data$HeartDiseaseorAttack))
+```
+#FEATURE SELECTION
+```{r}
+library(Boruta)
+```
+
+```{r}
+train <- train_data[,c(-2,-3,-6)]
+test <- test_data[,c(-2,-3,-6)]
+```
+
+```{r}
+dim(train)
+dim(test)
+```
+
+#CLASS BALANCING
+#balancing the imbalanced class using ROSE
+```{r}
+library(ROSE)
+```
+
+#fitting the data into the rose model
+```{r}
+heart_rose <- ROSE(HeartDiseaseorAttack~., data = train, seed=123)$data
+table(heart_rose$HeartDiseaseorAttack)
+```
+
+#visualizing the balance
+```{r}
+ggplot(data = heart_rose, aes(fill = HeartDiseaseorAttack))+
+    geom_bar(aes(x = HeartDiseaseorAttack))+
+    ggtitle("Number of samples in each class after ROSE", subtitle="Total samples:  177576")+
+    xlab("")+
+    ylab("Samples")+
+    scale_y_continuous(expand = c(0,0))+
+    scale_x_discrete(expand = c(0,0))+
+    theme(legend.position = "none", 
+          legend.title = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank())
+```
+
+```{r}
+library(randomForest)
+```
+
+#fitting the balanced data into random forest algorithm
+```{r}
+rfrose <- randomForest(HeartDiseaseorAttack~., data=heart_rose)
+```
+
+#getting the confusion matrix
+```{r}
+caret::confusionMatrix(predict(rfrose, test), test$HeartDiseaseorAttack, positive = '1')
+```
+
+#Building Logistic Regression Models
+```{r}
+rose_logmodel <- glm(HeartDiseaseorAttack~., data = heart_rose, family = binomial(link = "logit"))
+```
+
+#getting the model summary
+```{r}
+summary(rose_logmodel)
+```
+
+#running anova on the model
+```{r}
+anova(rose_logmodel, test = "Chisq")
+```
+
+#using the LR model to predict
+```{r}
+pred_results <- predict(rose_logmodel, test, "link")
+
+pred_results <- ifelse(pred_results > 0.5,1,0)
+```
+
+#getting the model accuracy
+```{r}
+misClasificError <- mean(pred_results != test$HeartDiseaseorAttack)
+print(paste('Accuracy',1-misClasificError))
+```
+
+#viewing the top rows of the predicted
+```{r}
+head(pred_results)
+```
+
+#converting the predicted to factor
+```{r}
+pred_results <- as.factor(pred_results)
+
+str(pred_results)
+```
+
+#getting the confusion matrix
+```{r}
+caret::confusionMatrix(pred_results, test$HeartDiseaseorAttack, positive="1", mode="everything")
+```
+
+#loading a library for cross validation
+```{r}
+library(e1071) 
+```
+
+#fitting the data with a repeated CV model
+```{r}
+rose_cv <- train(HeartDiseaseorAttack~., data = heart_rose, method = "glm", family = "binomial", metric="Accuracy", trControl = trainControl(method = "repeatedcv", number = 10, repeats = 5)) 
+
+rose_cv
+```
+
+#saving the prediction into a variable name
+```{r}
+pred_cv <- predict(rose_cv, test)
+```
+
+#converting the predicted to factor
+```{r}
+pred_cv <- as.factor(pred_cv)
+str(pred_cv)
+```
+
+#getting the confusion matrix 
+```{r}
+caret::confusionMatrix(pred_cv, test$HeartDiseaseorAttack, positive="1",mode="everything")
+```
+
+```{r}
+
+```
+
+
