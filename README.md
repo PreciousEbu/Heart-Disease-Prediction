@@ -17,12 +17,9 @@ The dataset used for this project was downloaded from Kaggle. The dataset contai
 
 #### Findings and Results
 
--	Data Processing
-Not much was done on missing values because the data came clean. Nonetheless, data type conversions were carried out.
--	Data Visualization
-Graphs were plotted to get visible insights on the different variables. Histograms were plotted for each feature with the representation of the cases of heart disease or not. Box plots were also plotted to visualized outliers. Relationships between variables were also visualized using a heatmap and correlation plot.
--	Exploratory Data Analysis (EDA)
-The data was explored for further insights. Outliers were detected and treated by replacing with the column means. Statistical analysis were performed to test for relationships between variables using chi-square test of independence. The response variable “Heartdiseaseorattack” had a statistical significant relationship with all predictor variables. From our results, 90.58% of cases did not have heart disease or attack while 9.42% of cases had heart disease or attack. Feature importance was done using boruta to determine the most important variables. 3 features (high BP, high cholesterol and smoker) were deemed unimportant and dropped.
+-	Data Processing: Not much was done on missing values because the data came clean. Nonetheless, data type conversions were carried out.
+-	Data Visualization: Graphs were plotted to get visible insights on the different variables. Histograms were plotted for each feature with the representation of the cases of heart disease or not. Box plots were also plotted to visualized outliers. Relationships between variables were also visualized using a heatmap and correlation plot.
+-	Exploratory Data Analysis (EDA): The data was explored for further insights. Outliers were detected and treated by replacing with the column means. Statistical analysis were performed to test for relationships between variables using chi-square test of independence. The response variable “Heartdiseaseorattack” had a statistical significant relationship with all predictor variables. From our results, 90.58% of cases did not have heart disease or attack while 9.42% of cases had heart disease or attack. Feature importance was done using boruta to determine the most important variables. 3 features (high BP, high cholesterol and smoker) were deemed unimportant and dropped.
 
 ####	Machine Learning
 - Data Science through Machine learning has helped provide ways to build predictive models that assist healthcare and other industries. With the help of machine learning, we were able to use algorithms to predict the cases of heart disease or attack or not. Various machine learning models were built to get the best performing models.
